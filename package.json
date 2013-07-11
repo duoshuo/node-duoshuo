@@ -17,5 +17,8 @@
   "license": "BSD",
   "bugs": {
     "url": "https://github.com/turingou/duoshuo/issues"
+  },
+  "dependencies" : {
+    "request":"*"
   }
 }
