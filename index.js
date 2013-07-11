@@ -32,7 +32,7 @@ exports.join = function(user,cb) {
         form: {
             short_name: _ds.config.short_name,
             secret: _ds.config.secret,
-            user: user,
+            user: user.info,
             access_token: user.access_token
         }
     },function(user){
@@ -66,7 +66,7 @@ exports.tops = function(params,cb) {
     var config = _ds.config;
     api.request('GET','http://api.duoshuo.com/sites/listTopThreads.json?short_name=' + config.short_name + '&range=' + params.range + '&num_items=' + params.num_items,function(tops){
         cb(tops)
-    })
+    });
 }
 
 /**
