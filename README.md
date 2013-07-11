@@ -1,6 +1,11 @@
-![duoshuo](http://ds.cdncache.org/avatar-50/205/32880.jpg) Duoshuo.com API for node.js
+![duoshuo](http://ds.cdncache.org/avatar-50/205/32880.jpg) duoshuo.com apis
 =========
 ![npm](https://badge.fury.io/js/duoshuo.png)
+
+#### 这是什么？
+
+这是一个多说社交评论api的包装集（node.js），简单配置后，你可以通过这个模块与多说api进行简单的通信。
+这个模块在我的另外一个项目 Tesla (`npm install tesla`) 中使用到，那是一个基于社交评论的简易快速论坛系统。
 
 #### 如何安装
 
