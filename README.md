@@ -1,7 +1,6 @@
-![duoshuo](http://ds.cdncache.org/avatar-50/205/32880.jpg)
+![duoshuo](http://ds.cdncache.org/avatar-50/205/32880.jpg) Duoshuo.com API for node.js
 =========
-
-### Duoshuo.com API for node.js
+![npm](https://badge.fury.io/js/duoshuo.png)
 
 #### 如何安装
 
