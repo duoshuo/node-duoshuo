@@ -41,11 +41,54 @@ exports.join = function(user,cb) {
     })
 }
 
-// 获取文章的评论与转发数量
-// threads[array] 文章id数组
+/**
+*
+* @func : 获取文章的评论与转发数量
+* @params: threads[array] 文章id数组
+*
+**/
 exports.threads = function(threads,cb) {
     var config = _ds.config;
     api.request('GET','http://api.duoshuo.com/threads/counts?short_name=' + config.short_name + '&threads=' + threads.josin(','),function(comments){
         cb(comments)
     });
+}
+
+/**
+*
+* @func : 获取热评文章，每月每周每日评论数量最多的文章
+    @param: 
+        - range
+        - num_items
+*
+**/
+exports.tops = function(params,cb) {
+    var config = _ds.config;
+    api.request('GET','http://api.duoshuo.com/sites/listTopThreads.json?short_name=' + config.short_name + '&range=' + params.range + '&num_items=' + params.num_items,function(tops){
+        cb(tops)
+    })
+}
+
+/**
+*
+* @func : 发布评论，意味着可以自己包装评论的形式
+* @params: form[object]
+    - message *
+    - thread_key
+    - thread_id
+    - parent_id
+    - author_name
+    - author_email
+    - author_url
+**/
+exports.comment = function(form) {
+    var config = _ds.config;
+    form['short_name'] = config.short_name;
+    form['secret'] = config.secret;
+    api.post({
+        url: 'http://api.duoshuo.com/posts/create',
+        form: form
+    },function(comment){
+        cb(comment)
+    })
 }
