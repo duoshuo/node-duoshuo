@@ -9,9 +9,7 @@
 
 #### 如何安装
 
-使用npm安装：
-
-`npm install duoshuo`
+使用npm安装：`npm install duoshuo`
 
 #### 如何使用
 
