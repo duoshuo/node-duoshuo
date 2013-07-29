@@ -1,6 +1,6 @@
 {
   "name": "duoshuo",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "duoshuo.com APIs for node.js",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "url": "https://github.com/turingou/duoshuo/issues"
   },
   "dependencies" : {
-    "request":"*"
+    "request":"*",
+    "underscore": "*"
   }
 }
