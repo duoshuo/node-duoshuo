@@ -43,7 +43,7 @@ exports.threads = function(threads, cb) {
     var config = exports.config();
     api.get('http://api.duoshuo.com/threads/counts', {
         short_name: config.short_name,
-        threads: threads.josin(',')
+        threads: threads.join(',')
     }, function(comments) {
         cb(comments);
     });

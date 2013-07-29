@@ -4,14 +4,17 @@
   "description": "duoshuo.com APIs for node.js",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nodeunit ./test.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/turingou/duoshuo"
   },
   "keywords": [
-    "duoshuo"
+    "duoshuo",
+    "social-network",
+    "bbs",
+    "forum"
   ],
   "author": "turingou",
   "license": "BSD",
@@ -21,5 +24,8 @@
   "dependencies" : {
     "request":"*",
     "underscore": "*"
+  },
+  "devDependencies": {
+    "nodeunit": "*"
   }
 }

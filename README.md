@@ -7,11 +7,15 @@ duoshuo.com APIs for node.js
 这是一个多说社交评论api的包装集（node.js），简单配置后，你可以通过这个模块与多说api进行简单的通信。
 这个模块在我的另外一个项目 Tesla (`npm install tesla`) 中使用到，那是一个基于社交评论的简易快速论坛系统。
 
-#### 如何安装
+### 如何安装
 
-使用npm安装：`npm install duoshuo`
+使用npm安装：
 
-#### 如何使用
+````
+$ npm install duoshuo
+````
+
+### 在 Node 程序中使用
 
 ````javascript
 var duoshuo = require('duoshuo');
@@ -54,4 +58,14 @@ duoshuo.comment({
     console.log(comment)
 })
 
+````
+
+### 执行测试
+
+本项目使用 `nodeunit` 执行测试用例
+
+````
+git clone https://github.com/turingou/duoshuo
+cd duoshuo
+nodeunit ./test/test.js
 ````
