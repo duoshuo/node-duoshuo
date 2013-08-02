@@ -1,4 +1,4 @@
-![duoshuo](http://ds.cdncache.org/avatar-50/205/32880.jpg) duoshuo.com apis ![npm](https://badge.fury.io/js/duoshuo.png)
+![duoshuo](http://ww1.sinaimg.cn/large/61ff0de3gw1e78kmsw0q0j200z00z0si.jpg) duoshuo.com apis ![npm](https://badge.fury.io/js/duoshuo.png)
 ---
 
 duoshuo.com apis for node.js

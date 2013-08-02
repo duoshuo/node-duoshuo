@@ -1,3 +1,5 @@
 *.sublime*
 node_*
 *.DS_*
+thumb
+psd
