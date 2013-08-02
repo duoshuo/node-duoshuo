@@ -1,10 +1,10 @@
 {
   "name": "duoshuo",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "duoshuo.com APIs for node.js",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./test/test.js"
+    "test": "./node_modules/mocha/bin/mocha ./test/test.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
     "forum"
   ],
   "author": "turingou",
-  "license": "BSD",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/turingou/duoshuo/issues"
   },
