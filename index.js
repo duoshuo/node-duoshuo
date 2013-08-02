@@ -1,4 +1,4 @@
-var api = require('./lib/api'),
+var api = require('beer'),
     pkg = require('./pkg');
 
 // 配置多说站点
@@ -11,10 +11,16 @@ exports.config = function(params) {
 }
 
 // 使用code换取access_token与用户ID
-export.auth = function(code, cb) {
+exports.auth = function(code, cb) {
     if (code && typeof(code) == 'string') {
-        api.post('http://api.duoshuo.com/oauth2/access_token?code=' + code, {}, function(token) {
-            cb(token);
+        api.post('http://api.duoshuo.com/oauth2/access_token', {
+            code: code
+        }, function(err, result) {
+            if (!err) {
+                cb(result.body);
+            } else {
+                cb('error');
+            }
         });
     }
 }
@@ -27,9 +33,13 @@ exports.join = function(user, cb) {
         secret: config.secret,
         user: user.info,
         access_token: user.access_token
-    }, function(user) {
+    }, function(err, result) {
         // 在多说新建的用户
-        cb(user);
+        if (!err) {
+            cb(result.body);
+        } else {
+            cb('error');
+        }
     })
 }
 
@@ -44,8 +54,12 @@ exports.threads = function(threads, cb) {
     api.get('http://api.duoshuo.com/threads/counts', {
         short_name: config.short_name,
         threads: threads.join(',')
-    }, function(comments) {
-        cb(comments);
+    }, function(err, comments) {
+        if (!err) {
+            cb(comments.body);
+        } else {
+            cb('error');
+        }
     });
 }
 
@@ -63,8 +77,12 @@ exports.tops = function(params, cb) {
         short_name: config.short_name,
         range: params.range,
         num_items: params.num_items
-    }, function(tops) {
-        cb(tops);
+    }, function(err, tops) {
+        if (!err) {
+            cb(tops.body);
+        } else {
+            cb('error');
+        }
     });
 }
 
@@ -84,7 +102,11 @@ exports.comment = function(form) {
     var config = exports.config();
     form['short_name'] = config.short_name;
     form['secret'] = config.secret;
-    api.post('http://api.duoshuo.com/posts/create',form,function(comment) {
-        cb(comment)
+    api.post('http://api.duoshuo.com/posts/create', form, function(err, comment) {
+        if (!err) {
+            cb(comment.body);
+        } else {
+            cb('error');
+        }
     })
 }

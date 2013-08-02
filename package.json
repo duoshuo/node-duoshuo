@@ -4,7 +4,7 @@
   "description": "duoshuo.com APIs for node.js",
   "main": "index.js",
   "scripts": {
-    "test": "nodeunit ./test.js"
+    "test": "mocha ./test/test.js"
   },
   "repository": {
     "type": "git",
@@ -22,10 +22,10 @@
     "url": "https://github.com/turingou/duoshuo/issues"
   },
   "dependencies" : {
-    "request":"*",
-    "underscore": "*"
+    "beer": "*"
   },
   "devDependencies": {
-    "nodeunit": "*"
+    "mocha": "*",
+    "should": "*"
   }
 }

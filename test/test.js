@@ -1,38 +1,21 @@
-// unit tests
 // 执行各个功能点测试
-var main = require('../index');
+var main = require('../index'),
+    should = require("should");
 
-module.exports = {
-    auth: function(test) {
-            main.auth('sample', function(token) {
-                    test.equal(token, '123', "this assertion should pass")); test.done();
-            });
-    },
-    join: function(test) {
-        main.join('sample', function(token) {
-                test.equal(token, '123', "this assertion should pass")); test.done();
-        });
-    },
-    threads: function(test) {
-        main.threads([
-                '1',
-                '2',
-                '3'
-            ], function(token) {
-                test.equal(token, '123', "this assertion should pass")); test.done();
-        });
-    },
-    tops: function(test) {
-        main.tops({
-                range: 123,
-                num_items: 10
-            }, function(tops) {
-                test.equal(tops, '123', "this assertion should pass")); test.done();
-        });
-    },
-    comment: function(test) {
-        main.comment('sample', function(token) {
-                test.equal(token, '123', "this assertion should pass")); test.done();
-        });
-    }
+var fetch = function(type, params, cb) {
+    main[type](params, cb)
 }
+
+describe('Auth', function() {
+    describe('#token', function() {
+        it('无效的 code 必须被忽略', function(done) {
+            fetch('auth', 'fakecode', function(token) {
+                var code = token.code,
+                    error = token.errorMessage;
+                code.should.equal(2);
+                error.should.equal('Code不存在');
+                done();
+            });
+        });
+    })
+});
