@@ -12,16 +12,21 @@ $ npm install duoshuo
 ### Sample code
 
 ````javascript
-var duoshuo = require('duoshuo');
+var Duoshuo = require('duoshuo');
 
-// configs
-duoshuo.config({
+var duoshuo = new Duoshuo({
     short_name: 'abc', // 站点申请的多说二级域名。
     secret: 'xxx' // 站点密钥
 });
 
 // read configs
 var config = duoshuo.config();
+
+// reset configs
+duoshuo.config({
+    short_name: 'newABC',
+    secret: 'newXXX'
+})
 
 // fetch token
 duoshuo.auth(code,function(token){

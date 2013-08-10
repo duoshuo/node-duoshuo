@@ -1,17 +1,19 @@
-var api = require('beer'),
-    pkg = require('./pkg');
+var api = require('beer');
 
-// 配置多说站点
-exports.config = function(params) {
-    if (params) {
-        pkg.set('/config.json', params);
-    } else {
-        return pkg.fetch('/config.json');
-    }
+var Duoshuo = function(config) {
+    this.config = config;
 }
 
+Duoshuo.prototype.config = function(params) {
+    if (params) {
+        this.config = params;
+    } else {
+        return this.config;
+    }
+};
+
 // 使用code换取access_token与用户ID
-exports.auth = function(code, cb) {
+Duoshuo.prototype.auth = function(code, cb) {
     if (code && typeof(code) == 'string') {
         api.post('http://api.duoshuo.com/oauth2/access_token', {
             code: code
@@ -26,8 +28,8 @@ exports.auth = function(code, cb) {
 }
 
 // 将某个通过sso登录后的用户注册到自己的网站中
-exports.join = function(user, cb) {
-    var config = exports.config();
+Duoshuo.prototype.join = function(user, cb) {
+    var config = this.config();
     api.post('http://api.duoshuo.com/sites/join', {
         short_name: config.short_name,
         secret: config.secret,
@@ -49,8 +51,8 @@ exports.join = function(user, cb) {
  * @params: threads[array] 文章id数组
  *
  **/
-exports.threads = function(threads, cb) {
-    var config = exports.config();
+Duoshuo.prototype.threads = function(threads, cb) {
+    var config = this.config();
     api.get('http://api.duoshuo.com/threads/counts', {
         short_name: config.short_name,
         threads: threads.join(',')
@@ -71,8 +73,8 @@ exports.threads = function(threads, cb) {
         - num_items
 *
 **/
-exports.tops = function(params, cb) {
-    var config = exports.config();
+Duoshuo.prototype.tops = function(params, cb) {
+    var config = this.config();
     api.get('http://api.duoshuo.com/sites/listTopThreads.json', {
         short_name: config.short_name,
         range: params.range,
@@ -98,8 +100,8 @@ exports.tops = function(params, cb) {
     - author_email
     - author_url
 **/
-exports.comment = function(form) {
-    var config = exports.config();
+Duoshuo.prototype.comment = function(form) {
+    var config = this.config();
     form['short_name'] = config.short_name;
     form['secret'] = config.secret;
     api.post('http://api.duoshuo.com/posts/create', form, function(err, comment) {
@@ -110,3 +112,5 @@ exports.comment = function(form) {
         }
     })
 }
+
+module.exports = Duoshuo;
