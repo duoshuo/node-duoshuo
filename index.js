@@ -1,14 +1,14 @@
 var api = require('beer');
 
 var Duoshuo = function(config) {
-    this.config = config;
+    this.params = config;
 }
 
 Duoshuo.prototype.config = function(params) {
     if (params) {
-        this.config = params;
+        this.params = params;
     } else {
-        return this.config;
+        return this.params;
     }
 };
 
