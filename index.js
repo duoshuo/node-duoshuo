@@ -16,7 +16,9 @@ Duoshuo.prototype.config = function(params) {
 Duoshuo.prototype.auth = function(code, cb) {
     if (code && typeof(code) == 'string') {
         api.post('http://api.duoshuo.com/oauth2/access_token', {
-            code: code
+            form: {
+                code: code
+            }
         }, function(err, result) {
             if (!err) {
                 cb(result.body);
@@ -31,10 +33,12 @@ Duoshuo.prototype.auth = function(code, cb) {
 Duoshuo.prototype.join = function(user, cb) {
     var config = this.config();
     api.post('http://api.duoshuo.com/sites/join', {
-        short_name: config.short_name,
-        secret: config.secret,
-        user: user.info,
-        access_token: user.access_token
+        form: {
+            short_name: config.short_name,
+            secret: config.secret,
+            user: user.info,
+            access_token: user.access_token
+        }
     }, function(err, result) {
         // 在多说新建的用户
         if (!err) {
@@ -104,7 +108,9 @@ Duoshuo.prototype.comment = function(form) {
     var config = this.config();
     form['short_name'] = config.short_name;
     form['secret'] = config.secret;
-    api.post('http://api.duoshuo.com/posts/create', form, function(err, comment) {
+    api.post('http://api.duoshuo.com/posts/create', {
+        form: form
+    }, function(err, comment) {
         if (!err) {
             cb(comment.body);
         } else {

@@ -1,6 +1,6 @@
 {
   "name": "duoshuo",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "duoshuo.com APIs for node.js",
   "main": "index.js",
   "scripts": {
