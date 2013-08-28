@@ -28,7 +28,7 @@ Duoshuo.prototype.auth = function(code, cb) {
 // 将某个通过sso登录后的用户注册到自己的网站中
 Duoshuo.prototype.join = function(user, cb) {
     var config = this.config();
-    api.post('http://api.duoshuo.com/sites/join', {
+    api.post('http://api.duoshuo.com/sites/join.json', {
         form: {
             short_name: config.short_name,
             secret: config.secret,
@@ -48,7 +48,7 @@ Duoshuo.prototype.join = function(user, cb) {
  **/
 Duoshuo.prototype.threads = function(threads, cb) {
     var config = this.config();
-    api.get('http://api.duoshuo.com/threads/counts', {
+    api.get('http://api.duoshuo.com/threads/counts.json', {
         short_name: config.short_name,
         threads: threads.join(',')
     }, function(err, result) {
@@ -91,7 +91,7 @@ Duoshuo.prototype.comment = function(form) {
     var config = this.config();
     form['short_name'] = config.short_name;
     form['secret'] = config.secret;
-    api.post('http://api.duoshuo.com/posts/create', {
+    api.post('http://api.duoshuo.com/posts/create.json', {
         form: form
     }, function(err, result) {
         cb(err, result);
