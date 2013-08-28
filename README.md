@@ -29,7 +29,7 @@ duoshuo.config({
 })
 
 // fetch token
-duoshuo.auth(code,function(token){
+duoshuo.auth(code,function(err,token){
     console.log(token)
     // to sth with token    
 });
@@ -38,22 +38,22 @@ duoshuo.auth(code,function(token){
 duoshuo.join({
     info: {},
     access_token: token // user token
-},function(user){
-    console.log(user)
+},function(err,user){
+    console.log(err,user)
 });
 
 // fetch top articles
 duoshuo.tops({
     range: 'daily' // 获取本日，详见：http://dev.duoshuo.com/docs/50398b4b8551ece011000023
     num_items: 10 // 获取10篇
-},function(threads){
+},function(err,threads){
     console.log(threads)
 });
 
 // push comments to duoshuo.com
 duoshuo.comment({
     message: '我的一条新匿名评论'   
-},function(comment){
+},function(err,comment){
     console.log(comment)
 })
 

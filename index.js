@@ -20,11 +20,7 @@ Duoshuo.prototype.auth = function(code, cb) {
                 code: code
             }
         }, function(err, result) {
-            if (!err) {
-                cb(result.body);
-            } else {
-                cb('error');
-            }
+            cb(err, result);
         });
     }
 }
@@ -40,12 +36,7 @@ Duoshuo.prototype.join = function(user, cb) {
             access_token: user.access_token
         }
     }, function(err, result) {
-        // 在多说新建的用户
-        if (!err) {
-            cb(result.body);
-        } else {
-            cb('error');
-        }
+        cb(err, result);
     })
 }
 
@@ -60,12 +51,8 @@ Duoshuo.prototype.threads = function(threads, cb) {
     api.get('http://api.duoshuo.com/threads/counts', {
         short_name: config.short_name,
         threads: threads.join(',')
-    }, function(err, comments) {
-        if (!err) {
-            cb(comments.body);
-        } else {
-            cb('error');
-        }
+    }, function(err, result) {
+        cb(err, result);
     });
 }
 
@@ -83,12 +70,8 @@ Duoshuo.prototype.tops = function(params, cb) {
         short_name: config.short_name,
         range: params.range,
         num_items: params.num_items
-    }, function(err, tops) {
-        if (!err) {
-            cb(tops.body);
-        } else {
-            cb('error');
-        }
+    }, function(err, result) {
+        cb(err, result);
     });
 }
 
@@ -110,12 +93,8 @@ Duoshuo.prototype.comment = function(form) {
     form['secret'] = config.secret;
     api.post('http://api.duoshuo.com/posts/create', {
         form: form
-    }, function(err, comment) {
-        if (!err) {
-            cb(comment.body);
-        } else {
-            cb('error');
-        }
+    }, function(err, result) {
+        cb(err, result);
     })
 }
 
