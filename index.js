@@ -49,8 +49,10 @@ Duoshuo.prototype.join = function(user, cb) {
 Duoshuo.prototype.threads = function(threads, cb) {
     var config = this.config();
     api.get('http://api.duoshuo.com/threads/counts.json', {
-        short_name: config.short_name,
-        threads: threads.join(',')
+        query: {
+            short_name: config.short_name,
+            threads: threads.join(',')
+        }
     }, function(err, result) {
         cb(err, result);
     });
@@ -67,9 +69,11 @@ Duoshuo.prototype.threads = function(threads, cb) {
 Duoshuo.prototype.tops = function(params, cb) {
     var config = this.config();
     api.get('http://api.duoshuo.com/sites/listTopThreads.json', {
-        short_name: config.short_name,
-        range: params.range,
-        num_items: params.num_items
+        query: {
+            short_name: config.short_name,
+            range: params.range,
+            num_items: params.num_items
+        }
     }, function(err, result) {
         cb(err, result);
     });
