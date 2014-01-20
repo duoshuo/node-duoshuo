@@ -1,33 +1,23 @@
 var api = require('beer');
 
 var Duoshuo = function(config) {
-    this.params = config;
-}
-
-Duoshuo.prototype.config = function(params) {
-    if (params) {
-        this.params = params;
-    } else {
-        return this.params;
-    }
+    this.config = config;
 };
 
 // 使用code换取access_token与用户ID
-Duoshuo.prototype.auth = function(code, cb) {
-    if (code && typeof(code) == 'string') {
-        api.post('http://api.duoshuo.com/oauth2/access_token', {
-            form: {
-                code: code
-            }
-        }, function(err, result) {
-            cb(err, result);
-        });
-    }
-}
+Duoshuo.prototype.auth = function(code, callback) {
+    if (!code) return callback(new Error('code required'));
+    if (typeof(code) !== 'string') return callback(new Error('code must be string'));
+    api.post('http://api.duoshuo.com/oauth2/access_token', {
+        form: {
+            code: code
+        }
+    }, callback);
+};
 
 // 将某个通过sso登录后的用户注册到自己的网站中
-Duoshuo.prototype.join = function(user, cb) {
-    var config = this.config();
+Duoshuo.prototype.join = function(user, callback) {
+    var config = this.config;
     api.post('http://api.duoshuo.com/sites/join.json', {
         form: {
             short_name: config.short_name,
@@ -35,9 +25,7 @@ Duoshuo.prototype.join = function(user, cb) {
             user: user.info,
             access_token: user.access_token
         }
-    }, function(err, result) {
-        cb(err, result);
-    })
+    }, callback);
 }
 
 /**
@@ -46,16 +34,14 @@ Duoshuo.prototype.join = function(user, cb) {
  * @params: threads[array] 文章id数组
  *
  **/
-Duoshuo.prototype.threads = function(threads, cb) {
-    var config = this.config();
+Duoshuo.prototype.threads = function(threads, callback) {
+    var config = this.config;
     api.get('http://api.duoshuo.com/threads/counts.json', {
         query: {
             short_name: config.short_name,
             threads: threads.join(',')
         }
-    }, function(err, result) {
-        cb(err, result);
-    });
+    }, callback);
 }
 
 /**
@@ -66,17 +52,15 @@ Duoshuo.prototype.threads = function(threads, cb) {
         - num_items
 *
 **/
-Duoshuo.prototype.tops = function(params, cb) {
-    var config = this.config();
+Duoshuo.prototype.tops = function(params, callback) {
+    var config = this.config;
     api.get('http://api.duoshuo.com/sites/listTopThreads.json', {
         query: {
             short_name: config.short_name,
             range: params.range,
             num_items: params.num_items
         }
-    }, function(err, result) {
-        cb(err, result);
-    });
+    }, callback);
 }
 
 /**
@@ -91,15 +75,13 @@ Duoshuo.prototype.tops = function(params, cb) {
     - author_email
     - author_url
 **/
-Duoshuo.prototype.comment = function(form) {
-    var config = this.config();
+Duoshuo.prototype.comment = function(form, callback) {
+    var config = this.config;
     form['short_name'] = config.short_name;
     form['secret'] = config.secret;
     api.post('http://api.duoshuo.com/posts/create.json', {
         form: form
-    }, function(err, result) {
-        cb(err, result);
-    })
+    }, callback)
 }
 
 module.exports = Duoshuo;
