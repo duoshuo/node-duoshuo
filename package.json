@@ -1,6 +1,6 @@
 {
   "name": "duoshuo",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "duoshuo SDK based on Node.js",
   "main": "index.js",
   "scripts": {

@@ -13,7 +13,7 @@ Duoshuo.prototype.auth = function(code, callback) {
         form: {
             code: code
         }
-    }, function(err, result){
+    }, function(err, result) {
         if (err) return callback(err);
         if (result.body.code !== 0) return callback(new Error(result.body.errorMessage));
         return callback(err, result.body);
@@ -21,12 +21,15 @@ Duoshuo.prototype.auth = function(code, callback) {
 };
 
 // signin middleware
-Duoshuo.prototype.signin = function(req, res, next) {
-    this.auth(req.query.code, function(err, result){
-        if (err) return next(err);
-        res.locals.duoshuo = result;
-        return next();
-    });
+Duoshuo.prototype.signin = function() {
+    var self = this;
+    return function(req, res, next) {
+        self.auth(req.query.code, function(err, result) {
+            if (err) return next(err);
+            res.locals.duoshuo = result;
+            return next();
+        });
+    }
 };
 
 // 将某个通过sso登录后的用户注册到自己的网站中
@@ -43,11 +46,11 @@ Duoshuo.prototype.join = function(user, callback) {
 }
 
 /**
-*
-* @func : 获取文章的评论与转发数量
-* @params: threads[array] 文章id数组
-*
-**/
+ *
+ * @func : 获取文章的评论与转发数量
+ * @params: threads[array] 文章id数组
+ *
+ **/
 Duoshuo.prototype.threads = function(threads, callback) {
     var config = this.config;
     api.get('http://api.duoshuo.com/threads/counts.json', {
