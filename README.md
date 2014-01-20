@@ -19,17 +19,8 @@ var duoshuo = new Duoshuo({
     secret: 'xxx' // 站点密钥
 });
 
-// read configs
-var config = duoshuo.config();
-
-// reset configs
-duoshuo.config({
-    short_name: 'newABC',
-    secret: 'newXXX'
-})
-
 // fetch token
-duoshuo.auth(code,function(err,token){
+duoshuo.auth(code, function(err,token){
     console.log(token)
     // to sth with token    
 });
@@ -38,7 +29,7 @@ duoshuo.auth(code,function(err,token){
 duoshuo.join({
     info: {},
     access_token: token // user token
-},function(err,user){
+}, function(err,user){
     console.log(err,user)
 });
 

@@ -1,7 +1,7 @@
 {
   "name": "duoshuo",
   "version": "0.1.1",
-  "description": "duoshuo.com APIs for node.js",
+  "description": "duoshuo SDK based on Node.js",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha ./test/test.js"
