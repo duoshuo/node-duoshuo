@@ -16,12 +16,26 @@
     "bbs",
     "forum"
   ],
-  "author": "turingou",
+  "author": "turing <o.u.turing@gmail.com>",
+  "contributors": [{
+    "name": "turing",
+    "email": "o.u.turing@gmail.com"
+  }, {
+    "name": "shen2",
+    "email": "zhenyupku@gmail.com"
+  }],
+  "maintainers": [{
+    "name": "turing",
+    "email": "o.u.turing@gmail.com"
+  }, {
+    "name": "shen2",
+    "email": "zhenyupku@gmail.com"
+  }],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/turingou/duoshuo/issues"
   },
-  "dependencies" : {
+  "dependencies": {
     "beer": "*"
   },
   "devDependencies": {
