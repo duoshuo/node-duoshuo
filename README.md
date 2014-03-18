@@ -25,26 +25,28 @@ duoshuo.auth(code, function(err,token){
     // to sth with token    
 });
 
+var access_token = 'xxxxxxxxxxxxxxxxxx';	// 通过duoshuo.auth获得的access_token
+var duoshuoClient = duoshuo.getClient(access_token);
+
 // join local user to duoshuo.com
-duoshuo.join({
-    info: {},
-    access_token: token // user token
+duoshuoClient.join({
+    user: {},
 }, function(err,user){
     console.log(err,user)
 });
 
 // fetch top articles
-duoshuo.tops({
+duoshuoClient.tops({
     range: 'daily' // 获取本日，详见：http://dev.duoshuo.com/docs/50398b4b8551ece011000023
     num_items: 10 // 获取10篇
-},function(err,threads){
+}, function(err, threads){
     console.log(threads)
 });
 
 // push comments to duoshuo.com
-duoshuo.comment({
+duoshuoClient.comment({
     message: '我的一条新匿名评论'   
-},function(err,comment){
+}, function(err,comment){
     console.log(comment)
 })
 

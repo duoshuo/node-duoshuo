@@ -1,104 +1,120 @@
-var api = require('beer');
+var querystring = require('querystring'),
+	_ = require('underscore'),
+	request = require('request');
 
 var Duoshuo = function(config) {
     if (!config) return false;
     this.config = config;
 };
 
-// 使用code换取access_token与用户ID
+/**
+ * 使用code换取access_token与用户ID
+ */
 Duoshuo.prototype.auth = function(code, callback) {
-    if (!code) return callback(new Error('code required'));
-    if (typeof(code) !== 'string') return callback(new Error('code must be string'));
-    api.post('http://api.duoshuo.com/oauth2/access_token', {
-        form: {
-            code: code
-        }
-    }, function(err, result) {
-        if (err) return callback(err);
-        if (result.body.code !== 0) return callback(new Error(result.body.errorMessage));
-        return callback(err, result.body);
-    });
+    if (!code)
+    	return callback(new Error('code required'));
+    if (typeof(code) !== 'string')
+    	return callback(new Error('code must be string'));
+    
+    request.post('http://api.duoshuo.com/oauth2/access_token', {
+	    	form : {code: code},
+	    	json : true
+	    }, function(err, response, body){
+	        if (err)
+	        	return callback(err);
+	        
+	        if (response.body.code !== 0)
+	        	return callback(new Error(response.body.errorMessage));
+	        
+	        return callback(err, response.body);
+	    });
 };
 
-// signin middleware
+
+/**
+ * signin middleware
+ * express/connect等框架可直接使用此middleware
+ */
 Duoshuo.prototype.signin = function() {
-    var self = this;
-    return function(req, res, next) {
-        self.auth(req.query.code, function(err, result) {
-            if (err) return next(err);
-            res.locals.duoshuo = result;
-            return next();
-        });
-    }
+	var self = this;
+	return function(req, res, next) {
+		self.auth(req.query.code, function(err, result) {
+			if (err) return next(err);
+			res.locals.duoshuo = result;
+			return next();
+		});
+	}
 };
 
-// 将某个通过sso登录后的用户注册到自己的网站中
-Duoshuo.prototype.join = function(user, callback) {
-    var config = this.config;
-    api.post('http://api.duoshuo.com/sites/join.json', {
-        form: {
-            short_name: config.short_name,
-            secret: config.secret,
-            user: user.info,
-            access_token: user.access_token
-        }
-    }, callback);
-}
+Duoshuo.prototype.getClient = function(access_token){
+	var client = new Duoshuo.Client(access_token);
+	client.short_name = this.config.short_name;
+	
+	return client;
+};
 
 /**
- *
- * @func : 获取文章的评论与转发数量
- * @params: threads[array] 文章id数组
- *
- **/
-Duoshuo.prototype.threads = function(threads, callback) {
-    var config = this.config;
-    api.get('http://api.duoshuo.com/threads/counts.json', {
-        query: {
-            short_name: config.short_name,
-            threads: threads.join(',')
-        }
-    }, callback);
-}
+ * 构造一个Duoshuo.Client实例
+ * Duoshuo.Client用于在拥有access token的情况下访问多说接口
+ */
+Duoshuo.Client = function(access_token){
+	this.access_token = access_token;
+};
+
+var res = function(cb){
+	return function(error, response, body){ 
+	    if (!error) {
+	        cb(null, {
+	            stat: response.statusCode,
+	            response: response,
+	            body: body
+	        });
+	    } else {
+	        cb(error, {
+	            response: response
+	        });
+	    }
+	};
+};
+
+Duoshuo.Client.prototype.get = function(path, data, callback){
+	var url = 'http://api.duoshuo.com/' + path + '.json';
+		params = _.extend({
+			short_name	: this.short_name,
+			access_token: this.access_token,
+		}, data);
+	
+	url += '?' + querystring.stringify(params);
+	
+	request.get(url, {json : true}, res(callback));
+};
+
+Duoshuo.Client.prototype.post = function(path, data, callback){
+	var url = 'http://api.duoshuo.com/' + path + '.json',
+		params = _.extend({
+			short_name	: this.short_name,
+			access_token: this.access_token,
+		}, data);
+	
+	request.post(url, {json : true, form:params}, res(callback));
+};
 
 /**
-*
-* @func : 获取热评文章，每月每周每日评论数量最多的文章
-  @param: 
-    - range
-    - num_items
-*
-**/
-Duoshuo.prototype.tops = function(params, callback) {
-    var config = this.config;
-    api.get('http://api.duoshuo.com/sites/listTopThreads.json', {
-        query: {
-            short_name: config.short_name,
-            range: params.range,
-            num_items: params.num_items
-        }
-    }, callback);
-}
+ * 接口参数请参考官方文档
+ * @see http://dev.duoshuo.com/docs
+ */
+var apiList = {
+	userProfile : {method : 'get', path : 'users/profile'},
+	join	: {	method : 'post', path : 'sites/join'},
+	threads	: { method : 'get', path : 'threads/counts'},
+	comment	: {	method : 'post', path : 'posts/create'}, 
+	tops	: { method : 'get', path : 'sites/listTopThreads'},
+};
 
-/**
-*
-* @func : 发布评论，意味着可以自己包装评论的形式
-* @params: form[object]
-    - message *
-    - thread_key
-    - thread_id
-    - parent_id
-    - author_name
-    - author_email
-    - author_url
-**/
-Duoshuo.prototype.comment = function(form, callback) {
-    var config = this.config;
-    form['short_name'] = config.short_name;
-    form['secret'] = config.secret;
-    api.post('http://api.duoshuo.com/posts/create.json', {
-        form: form
-    }, callback)
-}
+_.each(apiList, function(options, key){
+	Duoshuo.Client.prototype[key] = function(data, callback){
+		return this[options.method](options.path, data, callback);
+	}
+});
 
 module.exports = Duoshuo;
