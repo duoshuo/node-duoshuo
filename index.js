@@ -1,1 +1,1 @@
-exports = module.exports = require('./libs/duoshuo');
+module.exports = require('./libs/duoshuo');
