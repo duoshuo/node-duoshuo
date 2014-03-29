@@ -6,24 +6,28 @@
  **/
 
 module.exports = {
+  token: {
+    method: 'post',
+    url: 'oauth2/access_token'
+  },
   userProfile: {
     method: 'get',
-    path: 'users/profile'
+    url: 'users/profile'
   },
   join: {
     method: 'post',
-    path: 'sites/join'
+    url: 'sites/join'
   },
   threads: {
     method: 'get',
-    path: 'threads/counts'
+    url: 'threads/counts'
   },
-  comment: {
+  comments: {
     method: 'post',
-    path: 'posts/create'
+    url: 'posts/create'
   },
   tops: {
     method: 'get',
-    path: 'sites/listTopThreads'
+    url: 'sites/listTopThreads'
   },
 };
