@@ -1,5 +1,5 @@
 module.exports = function(configs) {
-  var short_name = config.short_name;
+  var short_name = configs.short_name;
   return {
     get: {
       qs: {
