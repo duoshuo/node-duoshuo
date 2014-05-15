@@ -36,7 +36,7 @@
     "url": "https://github.com/turingou/duoshuo/issues"
   },
   "dependencies": {
-    "sdk": "git://github.com/turingou/sdk.git"
+    "sdk": "~0.1.1"
   },
   "devDependencies": {
     "mocha": "*",
