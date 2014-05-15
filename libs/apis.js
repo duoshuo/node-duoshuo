@@ -38,7 +38,7 @@ module.exports = {
   }
 }
 
-function defaultCallback = function(err, res, body, next) {
+function defaultCallback(err, res, body, next) {
   if (err) return next(err);
   if (res.statusCode !== 200) return next(new Error(res.statusCode), res);
   if (body.code !== 0) return next(new Error(body.errorMessage), res);
