@@ -68,9 +68,9 @@ Duoshuo.Client = function(sdk, access_token) {
 
 Duoshuo.Client.prototype.init = function(sdk) {
   var self = this;
-  Object.keys(sdk).forEach(function(key) {
+  Object.keys(apis).forEach(function(key) {
     if (key === 'token') return false;
-    self.prototype[key] = function(params, callback) {
+    self[key] = function(params, callback) {
       var method = apis[key].method;
       var data = params || {};
       if (method === 'post') {
