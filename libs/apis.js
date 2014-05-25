@@ -13,27 +13,27 @@ module.exports = {
   },
   userProfile: {
     method: 'get',
-    url: 'users/profile',
+    url: 'users/profile.json',
     callback: defaultCallback
   },
   join: {
     method: 'post',
-    url: 'sites/join',
+    url: 'sites/join.json',
     callback: defaultCallback
   },
   threads: {
     method: 'get',
-    url: 'threads/counts',
+    url: 'threads/counts.json',
     callback: defaultCallback
   },
   comments: {
     method: 'post',
-    url: 'posts/create',
+    url: 'posts/create.json',
     callback: defaultCallback
   },
   tops: {
     method: 'get',
-    url: 'sites/listTopThreads',
+    url: 'sites/listTopThreads.json',
     callback: defaultCallback
   }
 }
