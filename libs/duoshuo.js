@@ -22,8 +22,9 @@ Duoshuo.prototype.auth = function(code, callback) {
   if (typeof(code) !== 'string') return callback(new Error('code must be string'));
   if (!callback || typeof(callback) !== 'function') return callback(new Error('callback is required'));
   var query = {};
-  query.form = {}
+  query.form = {};
   query.form.code = code;
+  query.form.client_id = this.config.short_name;
   return this.sdk.token(query, callback);
 }
 
