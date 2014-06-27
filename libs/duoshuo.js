@@ -8,7 +8,7 @@ function Duoshuo(config) {
   if (!config) return false;
   if (!config.short_name) return false;
   this.config = config;
-  this.sdk = new SDK('http://api.duoshuo.com', apis, rules(config));
+  this.sdk = new SDK('https://api.duoshuo.com', apis, rules(config));
 }
 
 /**
