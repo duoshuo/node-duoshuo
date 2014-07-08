@@ -26,7 +26,7 @@ Duoshuo.prototype.auth = function(code, callback) {
   query.form.code = code;
   query.form.client_id = this.config.short_name;
   return this.sdk.token(query, callback);
-}
+};
 
 /**
  *
@@ -85,4 +85,4 @@ Duoshuo.Client.prototype.init = function(sdk) {
       return sdk[key](data, callback);
     }
   });
-}
+};

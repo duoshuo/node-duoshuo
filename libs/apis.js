@@ -36,7 +36,7 @@ module.exports = {
     url: 'sites/listTopThreads.json',
     callback: defaultCallback
   }
-}
+};
 
 function defaultCallback(err, res, body, next) {
   if (err) return next(err);

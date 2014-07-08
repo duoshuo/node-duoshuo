@@ -1,6 +1,6 @@
 {
   "name": "duoshuo",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "description": "duoshuo SDK based on Node.js",
   "main": "index.js",
   "scripts": {
@@ -36,7 +36,7 @@
     "url": "https://github.com/turingou/duoshuo/issues"
   },
   "dependencies": {
-    "sdk": "~0.1.1"
+    "sdk": "0.2.0"
   },
   "devDependencies": {
     "mocha": "*",
