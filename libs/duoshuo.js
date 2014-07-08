@@ -69,17 +69,33 @@ Duoshuo.Client = function(sdk, access_token) {
 
 Duoshuo.Client.prototype.init = function(sdk) {
   var self = this;
+  // init build-in method
+  ['get','post','put','delete'].forEach(function(buildInMethod){
+    self[buildInMethod] = function(url, params, callback) {
+      var data = params;
+      if (buildInMethod === 'post') {
+        if (!data.form) data.form = {};
+        data.form.access_token = self.access_token;
+      }
+      if (buildInMethod === 'get') {
+        if (!data.qs) data.qs = {};
+        data.qs.access_token = self.access_token;
+      }
+      return sdk[buildInMethod](url, data, callback);
+    };
+  });
+  // init custom api and inject `access_token`
   Object.keys(apis).forEach(function(key) {
     if (key === 'token') return false;
     self[key] = function(params, callback) {
       var method = apis[key].method;
-      var data = params || {};
+      var data = {};
       if (method === 'post') {
-        if (!data.form) data.form = {}
+        data.form = params.form || params;
         data.form.access_token = self.access_token;
       }
       if (method === 'get') {
-        if (!data.qs) data.qs = {}
+        data.qs = params.qs || params;
         data.qs.access_token = self.access_token;
       }
       return sdk[key](data, callback);
