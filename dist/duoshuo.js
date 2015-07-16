@@ -126,44 +126,38 @@ var duoshuoClient = (function () {
     value: function init(sdk) {
       var _this3 = this;
 
-      // init build-in method
-      ['get', 'post', 'put', 'delete'].forEach(function (buildInMethod) {
-        _this3[buildInMethod] = function (url, params, callback) {
+      // Init build-in method
+      ['get', 'post', 'put', 'delete'].forEach(function (method) {
+        _this3[method] = function (url, params, callback) {
           var data = params;
+          var key = ({
+            'get': 'qs',
+            'post': 'form'
+          })[method];
 
-          if (buildInMethod === 'post') {
-            if (!data.form) data.form = {};
+          if (!key) key = {};
 
-            data.form.access_token = _this3.access_token;
-          }
+          key.access_token = _this3.access_token;
 
-          if (buildInMethod === 'get') {
-            if (!data.qs) data.qs = {};
-
-            data.qs.access_token = _this3.access_token;
-          }
-
-          return sdk[buildInMethod](url, data, callback);
+          // Todo: rewrited to return a Promise
+          return sdk[method](url, data, callback);
         };
       });
 
-      // init custom api and inject `access_token`
+      // Init custom api and inject `access_token`
       Object.keys(_apis2['default']).forEach(function (key) {
         if (key === 'token') return;
 
         _this3[key] = function (params, callback) {
           var method = _apis2['default'][key].method;
           var data = {};
+          var qsKey = ({
+            'get': 'qs',
+            'post': 'form'
+          })[method];
 
-          if (method === 'post') {
-            data.form = params.form || params;
-            data.form.access_token = _this3.access_token;
-          }
-
-          if (method === 'get') {
-            data.qs = params.qs || params;
-            data.qs.access_token = _this3.access_token;
-          }
+          data[qsKey] = params[qsKey] || params;
+          data[qsKey].access_token = _this3.access_token;
 
           return sdk[key](data, callback);
         };
