@@ -1,104 +1,134 @@
-var SDK = require('sdk');
-var apis = require('./apis');
-var rules = require('./rules');
+import SDK from 'sdk'
+import Promise from 'bluebird'
+import apis from './apis'
+import rules from './rules'
 
-module.exports = Duoshuo;
+export default class Duoshuo {
+  constructor(config) {
+    if (!config.short_name) 
+      return
 
-function Duoshuo(config) {
-  if (!config) return false;
-  if (!config.short_name) return false;
-  this.config = config;
-  this.sdk = new SDK('https://api.duoshuo.com', apis, rules(config));
-}
+    this.config = config
+    this.host = 'api.duoshuo.com'
+    this.sdk = new SDK(`https://${ this.host }`, apis, rules(config))
+  }
 
-/**
- *
- * Duoshuo#auth
- * 使用code换取access_token与用户ID
- *
- **/
-Duoshuo.prototype.auth = function(code, callback) {
-  if (!code) return callback(new Error('code is required'));
-  if (typeof(code) !== 'string') return callback(new Error('code must be string'));
-  if (!callback || typeof(callback) !== 'function') return callback(new Error('callback is required'));
-  var query = {};
-  query.form = {};
-  query.form.code = code;
-  query.form.client_id = this.config.short_name;
-  return this.sdk.token(query, callback);
-};
+  /**
+   *
+   * Duoshuo#auth
+   * 使用code换取access_token与用户ID
+   *
+   **/
+  auth(code) {
+    return new Promise((res, rej) => {
+      if (!code)
+        return rej(new Error('Code is required'))
 
-/**
- *
- * Duoshuo#signin()
- * Signin middleware: express/connect等框架可直接使用此middleware
- *
- **/
-Duoshuo.prototype.signin = function() {
-  var self = this;
-  return function(req, res, next) {
-    self.auth(req.query.code, function(err, result) {
-      if (err) return next(err);
-      res.locals.duoshuo = result;
-      return next();
-    });
+      const query = {
+        form: {
+          code,
+          client_id: this.config.short_name
+        }
+      }
+
+      this.sdk.token(query, (err, ret) => {
+        if (err)
+          return rej(err)
+
+        return res(ret)
+      })
+    })
+  }
+
+  /**
+   *
+   * Duoshuo#signin()
+   * Signin middleware: express/connect等框架可直接使用此middleware
+   *
+   **/
+  signin() {
+    return (req, res, next) => {
+      this
+        .auth(req.query.code)
+        .then(result => {
+          res.locals.duoshuo = result
+          return next()
+        })
+        .catch(next)
+    }
+  }
+
+  /**
+   *
+   * Duoshuo#getClient
+   * 获取一个 duoshuoClient 实例
+   *
+   **/
+  getClient(access_token) {
+    if (!access_token) 
+      return
+
+    return new duoshuoClient(this.sdk, access_token)
   }
 }
 
 /**
  *
- * Duoshuo#getClient
- * 获取一个Duoshuo.Client实例
- *
+ * duoshuoClient
+ * 构造一个 duoshuoClient 实例,
+ * duoshuoClient 用于在拥有 `access_token` 的情况下访问多说接口
  **/
-Duoshuo.prototype.getClient = function(access_token) {
-  if (!access_token) return false;
-  return new Duoshuo.Client(this.sdk, access_token);
-};
+class duoshuoClient {
+  constructor(sdk, access_token) {
+    this.access_token = access_token
+    this.init(sdk)
+  }
 
-/**
- *
- * Duoshuo#Client
- * 构造一个Duoshuo.Client实例,
- * Duoshuo.Client用于在拥有access token的情况下访问多说接口
- **/
-Duoshuo.Client = function(sdk, access_token) {
-  this.access_token = access_token;
-  this.init(sdk);
-};
+  init(sdk) {
+    // init build-in method
+    ['get','post','put','delete'].forEach((buildInMethod) => {
+      this[buildInMethod] = (url, params, callback) => {
+        let data = params
 
-Duoshuo.Client.prototype.init = function(sdk) {
-  var self = this;
-  // init build-in method
-  ['get','post','put','delete'].forEach(function(buildInMethod){
-    self[buildInMethod] = function(url, params, callback) {
-      var data = params;
-      if (buildInMethod === 'post') {
-        if (!data.form) data.form = {};
-        data.form.access_token = self.access_token;
+        if (buildInMethod === 'post') {
+          if (!data.form) 
+            data.form = {}
+
+          data.form.access_token = this.access_token
+        }
+
+        if (buildInMethod === 'get') {
+          if (!data.qs) 
+            data.qs = {}
+
+          data.qs.access_token = this.access_token
+        }
+
+        return sdk[buildInMethod](url, data, callback)
       }
-      if (buildInMethod === 'get') {
-        if (!data.qs) data.qs = {};
-        data.qs.access_token = self.access_token;
+    })
+
+    // init custom api and inject `access_token`
+    Object.keys(apis).forEach(key => {
+      if (key === 'token') 
+        return
+
+      this[key] = (params, callback) => {
+        let method = apis[key].method
+        let data = {}
+
+        if (method === 'post') {
+          data.form = params.form || params
+          data.form.access_token = this.access_token
+        }
+
+        if (method === 'get') {
+          data.qs = params.qs || params
+          data.qs.access_token = this.access_token
+        }
+
+        return sdk[key](data, callback)
       }
-      return sdk[buildInMethod](url, data, callback);
-    };
-  });
-  // init custom api and inject `access_token`
-  Object.keys(apis).forEach(function(key) {
-    if (key === 'token') return false;
-    self[key] = function(params, callback) {
-      var method = apis[key].method;
-      var data = {};
-      if (method === 'post') {
-        data.form = params.form || params;
-        data.form.access_token = self.access_token;
-      }
-      if (method === 'get') {
-        data.qs = params.qs || params;
-        data.qs.access_token = self.access_token;
-      }
-      return sdk[key](data, callback);
-    }
-  });
-};
+    })
+  }
+}

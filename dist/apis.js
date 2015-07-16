@@ -4,7 +4,12 @@
  * http://dev.duoshuo.com/docs
  *
  **/
-export default {
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports['default'] = {
   token: {
     method: 'post',
     url: 'oauth2/access_token',
@@ -35,17 +40,16 @@ export default {
     url: 'sites/listTopThreads.json',
     callback: defaultCallback
   }
-}
+};
 
 function defaultCallback(err, res, body, next) {
-  if (err) 
-    return next(err)
+  if (err) return next(err);
 
-  if (res.statusCode !== 200) 
-    return next(new Error(res.statusCode), res)
+  if (res.statusCode !== 200) return next(new Error(res.statusCode), res);
 
-  if (body.code !== 0) 
-    return next(new Error(body.errorMessage), res)
+  if (body.code !== 0) return next(new Error(body.errorMessage), res);
 
-  return next(err, body)
+  return next(err, body);
 }
+module.exports = exports['default'];
+//# sourceMappingURL=apis.js.map
