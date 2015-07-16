@@ -85,30 +85,26 @@ class duoshuoClient {
   }
 
   init(sdk) {
-    // init build-in method
-    ['get','post','put','delete'].forEach((buildInMethod) => {
-      this[buildInMethod] = (url, params, callback) => {
+    // Init build-in method
+    ['get','post','put','delete'].forEach(method => {
+      this[method] = (url, params, callback) => {
         let data = params
+        let key = {
+          'get': 'qs',
+          'post': 'form'
+        }[method]
 
-        if (buildInMethod === 'post') {
-          if (!data.form) 
-            data.form = {}
+        if (!key)
+          key = {}
 
-          data.form.access_token = this.access_token
-        }
+        key.access_token = this.access_token
 
-        if (buildInMethod === 'get') {
-          if (!data.qs) 
-            data.qs = {}
-
-          data.qs.access_token = this.access_token
-        }
-
-        return sdk[buildInMethod](url, data, callback)
+        // Todo: rewrited to return a Promise
+        return sdk[method](url, data, callback)
       }
     })
 
-    // init custom api and inject `access_token`
+    // Init custom api and inject `access_token`
     Object.keys(apis).forEach(key => {
       if (key === 'token') 
         return
@@ -116,16 +112,13 @@ class duoshuoClient {
       this[key] = (params, callback) => {
         let method = apis[key].method
         let data = {}
+        let qsKey = {
+          'get': 'qs',
+          'post': 'form'
+        }[method]
 
-        if (method === 'post') {
-          data.form = params.form || params
-          data.form.access_token = this.access_token
-        }
-
-        if (method === 'get') {
-          data.qs = params.qs || params
-          data.qs.access_token = this.access_token
-        }
+        data[qsKey] = params[qsKey] || params
+        data[qsKey].access_token = this.access_token
 
         return sdk[key](data, callback)
       }
