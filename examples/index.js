@@ -1,13 +1,15 @@
-var duoshuo = require('../index');
-
+var Duoshuo = require('../index')
 var duoshuo = new Duoshuo({
   short_name: 'abc', // 站点申请的多说二级域名。
   secret: 'xxx' // 站点密钥
-});
+})
 
-var access_token = 'xxxxxxxxxxxxxxxxxx';  // 通过duoshuo.auth获得的access_token
-var duoshuoClient = duoshuo.getClient(access_token);
+// 通过 duoshuo.auth 获得的 access_token
+var access_token = 'xxxxxxxxxxxxxxxxxx'
 
-duoshuoClient.get('abc/def.json', {}, function(err, res, body){
-  
-});
+duoshuo
+  .getClient(access_token)
+  .get('abc/def.json')
+  .then(function({ body }){
+    console.log(body)
+  })

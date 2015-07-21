@@ -14,10 +14,6 @@ var _sdk = require('sdk');
 
 var _sdk2 = _interopRequireDefault(_sdk);
 
-var _bluebird = require('bluebird');
-
-var _bluebird2 = _interopRequireDefault(_bluebird);
-
 var _apis = require('./apis');
 
 var _apis2 = _interopRequireDefault(_apis);
@@ -43,28 +39,18 @@ var Duoshuo = (function () {
     /**
      *
      * Duoshuo#auth
-     * 使用code换取access_token与用户ID
+     * 使用 `code` 换取 `access_token` 与用户 ID
      *
      **/
     value: function auth(code) {
-      var _this = this;
+      var query = {
+        form: {
+          code: code,
+          client_id: this.config.short_name
+        }
+      };
 
-      return new _bluebird2['default'](function (res, rej) {
-        if (!code) return rej(new Error('Code is required'));
-
-        var query = {
-          form: {
-            code: code,
-            client_id: _this.config.short_name
-          }
-        };
-
-        _this.sdk.token(query, function (err, ret) {
-          if (err) return rej(err);
-
-          return res(ret);
-        });
-      });
+      return this.sdk.token(query);
     }
   }, {
     key: 'signin',
@@ -72,14 +58,14 @@ var Duoshuo = (function () {
     /**
      *
      * Duoshuo#signin()
-     * Signin middleware: express/connect等框架可直接使用此middleware
+     * Signin middleware: `Express/Connect` 等框架可直接使用此 middleware
      *
      **/
     value: function signin() {
-      var _this2 = this;
+      var _this = this;
 
       return function (req, res, next) {
-        _this2.auth(req.query.code).then(function (result) {
+        _this.auth(req.query.code).then(function (result) {
           res.locals.duoshuo = result;
           return next();
         })['catch'](next);
@@ -124,11 +110,11 @@ var duoshuoClient = (function () {
   _createClass(duoshuoClient, [{
     key: 'init',
     value: function init(sdk) {
-      var _this3 = this;
+      var _this2 = this;
 
       // Init build-in method
       ['get', 'post', 'put', 'delete'].forEach(function (method) {
-        _this3[method] = function (url, params, callback) {
+        _this2[method] = function (url, params) {
           var data = params;
           var key = ({
             'get': 'qs',
@@ -137,10 +123,10 @@ var duoshuoClient = (function () {
 
           if (!key) key = {};
 
-          key.access_token = _this3.access_token;
+          key.access_token = _this2.access_token;
 
           // Todo: rewrited to return a Promise
-          return sdk[method](url, data, callback);
+          return sdk[method](url, data);
         };
       });
 
@@ -148,7 +134,7 @@ var duoshuoClient = (function () {
       Object.keys(_apis2['default']).forEach(function (key) {
         if (key === 'token') return;
 
-        _this3[key] = function (params, callback) {
+        _this2[key] = function (params) {
           var method = _apis2['default'][key].method;
           var data = {};
           var qsKey = ({
@@ -157,9 +143,9 @@ var duoshuoClient = (function () {
           })[method];
 
           data[qsKey] = params[qsKey] || params;
-          data[qsKey].access_token = _this3.access_token;
+          data[qsKey].access_token = _this2.access_token;
 
-          return sdk[key](data, callback);
+          return sdk[key](data);
         };
       });
     }

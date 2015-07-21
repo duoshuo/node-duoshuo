@@ -1,5 +1,4 @@
 import SDK from 'sdk'
-import Promise from 'bluebird'
 import apis from './apis'
 import rules from './rules'
 
@@ -16,34 +15,24 @@ export default class Duoshuo {
   /**
    *
    * Duoshuo#auth
-   * 使用code换取access_token与用户ID
+   * 使用 `code` 换取 `access_token` 与用户 ID
    *
    **/
   auth(code) {
-    return new Promise((res, rej) => {
-      if (!code)
-        return rej(new Error('Code is required'))
-
-      const query = {
-        form: {
-          code,
-          client_id: this.config.short_name
-        }
+    const query = {
+      form: {
+        code,
+        client_id: this.config.short_name
       }
+    }
 
-      this.sdk.token(query, (err, ret) => {
-        if (err)
-          return rej(err)
-
-        return res(ret)
-      })
-    })
+    return this.sdk.token(query)
   }
 
   /**
    *
    * Duoshuo#signin()
-   * Signin middleware: express/connect等框架可直接使用此middleware
+   * Signin middleware: `Express/Connect` 等框架可直接使用此 middleware
    *
    **/
   signin() {
@@ -87,7 +76,7 @@ class duoshuoClient {
   init(sdk) {
     // Init build-in method
     ['get','post','put','delete'].forEach(method => {
-      this[method] = (url, params, callback) => {
+      this[method] = (url, params) => {
         let data = params
         let key = {
           'get': 'qs',
@@ -100,7 +89,7 @@ class duoshuoClient {
         key.access_token = this.access_token
 
         // Todo: rewrited to return a Promise
-        return sdk[method](url, data, callback)
+        return sdk[method](url, data)
       }
     })
 
@@ -109,7 +98,7 @@ class duoshuoClient {
       if (key === 'token') 
         return
 
-      this[key] = (params, callback) => {
+      this[key] = params => {
         let method = apis[key].method
         let data = {}
         let qsKey = {
@@ -120,7 +109,7 @@ class duoshuoClient {
         data[qsKey] = params[qsKey] || params
         data[qsKey].access_token = this.access_token
 
-        return sdk[key](data, callback)
+        return sdk[key](data)
       }
     })
   }

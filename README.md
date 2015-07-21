@@ -29,28 +29,31 @@ duoshuo
     console.error(err)
   })
 
-var access_token = 'xxxxxxxxxxxxxxxxxx'; // 通过duoshuo.auth获得的access_token
-var duoshuoClient = duoshuo.getClient(access_token);
+// 通过duoshuo.auth获得的access_token
+var access_token = 'xxxxxxxxxxxxxxxxxx'
+var client = duoshuo.getClient(access_token)
 
-// Koin local user to duoshuo.com
-duoshuoClient.join({
+// Join local user to duoshuo.com
+client.join({
   user: {},
-}, function(err, user) {
-  console.log(err, user)
+}).then(function(user) {
+  console.log(user)
+}).catch(function(err){
+  console.log(err)
 })
 
 // Fetch top articles
-duoshuoClient.tops({
+client.tops({
   range: 'daily' // 获取本日，详见：http://dev.duoshuo.com/docs/50398b4b8551ece011000023
   num_items: 10 // 获取10篇
-}, function(err, threads) {
+}).then(function(err, threads) {
   console.log(threads)
 })
 
 // Push comments to duoshuo.com
-duoshuoClient.comment({
+client.comment({
   message: '我的一条新匿名评论'   
-}, function(err, comment) {
+}).then(function(err, comment) {
   console.log(comment)
 })
 ```
@@ -59,5 +62,4 @@ duoshuoClient.comment({
 
 ```bash
 $ npm test
-```bash
-
+```
